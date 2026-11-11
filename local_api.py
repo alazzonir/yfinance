@@ -12,9 +12,12 @@ from zoneinfo import ZoneInfo
 from flask import Flask, jsonify, request
 import yfinance as yf
 from yfinance.exceptions import YFRateLimitError
+from earnings_api import register_earnings_routes
+from monitoring_api import register_monitoring
 
 
 app = Flask(__name__)
+register_monitoring(app)
 # Surface upstream failures instead of turning them into empty history.
 yf.config.debug.hide_exceptions = False
 
@@ -155,3 +158,7 @@ def today_history():
     except Exception:
         app.logger.exception("Unable to fetch history for %s", symbol)
         return jsonify(error="Unable to retrieve market data for this symbol from Yahoo Finance."), 502
+
+
+# Keep the earnings endpoint separate from quote and currency request handling.
+register_earnings_routes(app)

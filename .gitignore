@@ -24,3 +24,6 @@ ENV/
 /doc/source/reference/api
 !yfinance.css
 !/doc/source/development/assets/branches.png
+
+# Local Yahoo request monitoring logs
+logs/

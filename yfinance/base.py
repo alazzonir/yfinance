@@ -794,19 +794,19 @@ class TickerBase:
         }
         return {"id": content["id"], "content": content}
 
-    def get_earnings_dates(self, limit = 12, offset = 0) -> Optional[pd.DataFrame]:
+    def get_earnings_dates(self, limit = 12, offset = 0, refresh=False) -> Optional[pd.DataFrame]:
         if limit > 100:
             raise ValueError("Yahoo caps limit at 100")
 
-        if (limit, offset) in self._earnings_dates:
+        if not refresh and (limit, offset) in self._earnings_dates:
             return self._earnings_dates[(limit, offset)]
 
-        df = self._get_earnings_dates_using_scrape(limit, offset)
+        df = self._get_earnings_dates_using_scrape(limit, offset, refresh=refresh)
         self._earnings_dates[(limit, offset)] = df
         return df
 
     @utils.log_indent_decorator
-    def _get_earnings_dates_using_scrape(self, limit = 12, offset = 0) -> Optional[pd.DataFrame]:
+    def _get_earnings_dates_using_scrape(self, limit = 12, offset = 0, refresh=False) -> Optional[pd.DataFrame]:
         """
         Uses YfData.cache_get() to scrape earnings data from YahooFinance.
         (https://finance.yahoo.com/calendar/earnings?symbol=INTC)
@@ -815,7 +815,8 @@ class TickerBase:
             limit (int): Number of rows to extract (max=100)
             offset (int): if 0, search from future EPS estimates. 
                           if 1, search from the most recent EPS. 
-                          if x, search from x'th recent EPS. 
+                          if x, search from x'th recent EPS.
+            refresh (bool): Bypass the calendar's in-memory and HTTP caches.
     
         Returns:
             pd.DataFrame in the following format.
@@ -853,7 +854,7 @@ class TickerBase:
         #####################################################
         # Get data
         #####################################################
-        response = self._data.cache_get(url)
+        response = self._data.get(url) if refresh else self._data.cache_get(url)
     
         #####################################################
         # Response -> pd.DataFrame

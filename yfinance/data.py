@@ -11,6 +11,7 @@ import datetime
 from . import utils, cache
 from .utils import frozendict
 from .config import YfConfig
+from .request_monitor import instrument_session
 import threading
 
 from .exceptions import YFException, YFDataException, YFRateLimitError
@@ -146,7 +147,7 @@ class YfData(metaclass=SingletonMeta):
             raise YFDataException(f"Unsupported session type {type(session)}; expected curl_cffi or requests Session. Solution: stop setting session, let yfinance handle.")
 
         with self._cookie_lock:
-            self._session = session
+            self._session = instrument_session(session)
             if YfConfig.network.proxy is not None:
                 self._session.proxies = _normalize_proxy(YfConfig.network.proxy)
 

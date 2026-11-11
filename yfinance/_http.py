@@ -15,6 +15,7 @@ import functools
 import os
 
 from . import utils
+from .request_monitor import instrument_session
 
 _DISABLE = os.environ.get("YF_DISABLE_CURL_CFFI", "").lower() in ("1", "true", "yes")
 
@@ -58,7 +59,7 @@ def _warn_once_on_fallback():
 def new_session():
     """Create a default Session for the active backend."""
     if HAS_CURL_CFFI:
-        return _backend.Session(impersonate="chrome")
+        return instrument_session(_backend.Session(impersonate="chrome"))
     _warn_once_on_fallback()
     s = _backend.Session()
     s.headers.update({
@@ -66,7 +67,7 @@ def new_session():
         "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
         "Accept-Language": "en-US,en;q=0.5",
     })
-    return s
+    return instrument_session(s)
 
 
 def cookie_jar(session):

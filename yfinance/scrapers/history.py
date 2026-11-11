@@ -111,7 +111,7 @@ class PriceHistory:
                 start=None, end=None, prepost=False, actions=True,
                 auto_adjust=True, back_adjust=False, repair=False, keepna=False,
                 rounding=False, timeout=10,
-                raise_errors=False) -> pd.DataFrame:
+                raise_errors=False, refresh=False) -> pd.DataFrame:
         """
         :Parameters:
             period : str
@@ -152,6 +152,8 @@ class PriceHistory:
             timeout : None or float
               | Optional: timeout fetches after N seconds
               | Default: 10 seconds
+            refresh : bool
+                Bypass the historical HTTP cache for this request. Default: False.
             raise_errors : bool
                 If True, then raise errors as Exceptions instead of logging.
         """
@@ -283,7 +285,7 @@ class PriceHistory:
         data = None
         get_fn = self._data.get
         dt_now = pd.Timestamp.now('UTC')
-        if end is not None:
+        if end is not None and not refresh:
             end_dt = pd.Timestamp(end, unit='s').tz_localize("UTC")
             data_delay = _datetime.timedelta(minutes=30)
             if end_dt + data_delay <= dt_now:
