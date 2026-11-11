@@ -3,6 +3,8 @@
 
 # Download market data from Yahoo! Finance's API
 
+For this fork's uv environment and localhost Flask endpoint, see [Local API setup](LOCAL_API.md).
+
 <a target="new" href="https://pypi.python.org/pypi/yfinance"><img border=0 src="https://img.shields.io/badge/python-3.6+-blue.svg?style=flat" alt="Python version"></a>
 <a target="new" href="https://pypi.python.org/pypi/yfinance"><img border=0 src="https://img.shields.io/pypi/v/yfinance.svg?maxAge=60%" alt="PyPi version"></a>
 <a target="new" href="https://pypi.python.org/pypi/yfinance"><img border=0 src="https://img.shields.io/pypi/status/yfinance.svg?maxAge=60" alt="PyPi status"></a>
